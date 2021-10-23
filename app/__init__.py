@@ -12,8 +12,8 @@ def create_app():
     CORS(app)
     app.register_blueprint(user_api, url_prefix='/users')
     setup_db(app)
-    db.drop_all()
-    db.create_all()
+    # db.drop_all()
+    # db.create_all()
 
     @app.errorhandler(422)
     def unprocessable(error):

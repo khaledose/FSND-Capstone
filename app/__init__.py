@@ -1,13 +1,14 @@
 from flask import Flask
 from flask_cors import CORS
 
-from database import db, setup_db
-from Controllers.UsersController import user_api
+from .database import db, setup_db
+from .controllers.UsersController import user_api
 from flask import jsonify
-from Exceptions.AuthError import AuthError
+from .exceptions.AuthError import AuthError
 
 def create_app():
     app = Flask(__name__)
+    app.config.from_object("app.config.Config")
     CORS(app)
     app.register_blueprint(user_api, url_prefix='/users')
     setup_db(app)
@@ -56,5 +57,7 @@ def create_app():
 
     return app
 
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
+    app.run()

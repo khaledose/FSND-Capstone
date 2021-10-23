@@ -1,6 +1,6 @@
-from Models.User import User
-from Repositories.BaseRepository import BaseRepository
-from database import db
+from ..models.User import User
+from .BaseRepository import BaseRepository
+from ..database import db
 
 class UsersRepository(BaseRepository):
     def getAll(self):

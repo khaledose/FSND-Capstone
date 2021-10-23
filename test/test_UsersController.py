@@ -1,9 +1,9 @@
 import unittest
 import json
 from .test_config import DB_PATH
-from app import create_app
-from database import setup_db, db
-from Models.User import User
+from ..app import create_app
+from ..app.database import setup_db, db
+from ..app.models.User import User
 
 class UserTestCase(unittest.TestCase):
     """This class represents the trivia test case"""

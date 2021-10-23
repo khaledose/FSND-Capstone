@@ -1,4 +1,4 @@
-from Repositories.UsersRepository import UsersRepository
+from ..repositories.UsersRepository import UsersRepository
 from flask import request, jsonify, abort
 from flask import Blueprint
 

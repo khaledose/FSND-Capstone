@@ -3,6 +3,7 @@ from flask_cors import CORS
 
 from .database import db, setup_db
 from .controllers.UsersController import user_api
+from .controllers.BooksController import book_api
 from flask import jsonify
 from .exceptions.AuthError import AuthError
 
@@ -11,6 +12,7 @@ def create_app():
     app.config.from_object("app.config.Config")
     CORS(app)
     app.register_blueprint(user_api, url_prefix='/users')
+    app.register_blueprint(book_api, url_prefix='/books')
     setup_db(app)
     # db.drop_all()
     # db.create_all()

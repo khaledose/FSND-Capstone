@@ -9,23 +9,28 @@ class UsersRepository(BaseRepository):
     def get(self, id):
         return User.query.get(id)
 
-    def post(self, request):
+    def getByEmail(self, email):
+        return User.query.filter_by(email=email).first()
+
+    def register(self, request):
         try:
-            response = request.get_json()
-            newUser = User(username=response.get('username', None),
-                        email=response.get('email', None))
+            newUser = User(firstName=request.get('given_name', None),
+                        lastName=request.get('family_name', None),
+                        email=request.get('email', None))
             db.session.add(newUser)
             db.session.commit()
             return newUser
         except Exception as error:
             db.session.rollback()
 
-    def update(self, id, request):
+    def update(self, request, profile):
         try:
-            user = self.get(id)
+            user = User.query.get(profile['id'])
+            print(user)
             response = request.get_json()
-            user.username = response.get('username', None)
-            user.email  = response.get('email', None)
+            user.firstName = response.get('given_name', user.firstName)
+            user.lastName  = response.get('family_name', user.lastName)
+            user.email  = response.get('email', user.email)
             db.session.commit()
             return user
         except Exception as error:

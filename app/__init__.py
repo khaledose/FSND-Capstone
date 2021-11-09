@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_cors import CORS
-
-from .database import db, setup_db
+from .database import setup_db
 from .controllers.UsersController import user_api
 from .controllers.BooksController import book_api
+from .controllers.LibraryController import library_api
 from flask import jsonify
 from .exceptions.AuthError import AuthError
 
@@ -13,10 +13,9 @@ def create_app():
     CORS(app)
     app.register_blueprint(user_api, url_prefix='/users')
     app.register_blueprint(book_api, url_prefix='/books')
+    app.register_blueprint(library_api, url_prefix='/library')
     setup_db(app)
-    # db.drop_all()
-    # db.create_all()
-
+    
     @app.errorhandler(422)
     def unprocessable(error):
         return jsonify({

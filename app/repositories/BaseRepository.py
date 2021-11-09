@@ -23,4 +23,4 @@ class BaseRepository:
             db.session.rollback()
 
     def close(self):
-        db.session.rollback()
+        db.session.close()

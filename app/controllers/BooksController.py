@@ -49,7 +49,7 @@ def postBook():
         repository.close()
 
 @book_api.route('/<book_id>', methods=['PATCH'])
-@requires_auth(permission='patch:books')
+@requires_auth(permission='update:books')
 def updateBook(book_id):
     try:
         book = repository.update(book_id, request)

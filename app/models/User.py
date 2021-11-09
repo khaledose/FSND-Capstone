@@ -4,7 +4,8 @@ from sqlalchemy import Column, String, Integer
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(Integer, primary_key=True)
-    username = Column(String(80), unique=True, nullable=False)
+    firstName = Column(String(80), nullable=True)
+    lastName = Column(String(80), nullable=True)
     email = Column(String(80), unique=True, nullable=False)
 
     def __repr__(self) -> str:
@@ -13,6 +14,7 @@ class User(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'username': self.username,
+            'firstName': self.firstName,
+            'lastName': self.lastName,
             'email': self.email
         }

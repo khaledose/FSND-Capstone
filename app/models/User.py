@@ -1,9 +1,9 @@
 from ..database import db
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String
 
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(Integer, primary_key=True)
+    id = Column(String(64), primary_key=True)
     firstName = Column(String(80), nullable=True)
     lastName = Column(String(80), nullable=True)
     email = Column(String(80), unique=True, nullable=False)

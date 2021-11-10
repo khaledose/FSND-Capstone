@@ -3,7 +3,7 @@ from sqlalchemy import Column, String, Integer
 
 class Book(db.Model):
     __tablename__ = 'books'
-    id = db.Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
     title = Column(String(80), unique=True)
     description = Column(String(300))
     author = Column(String(80))

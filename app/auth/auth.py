@@ -1,6 +1,6 @@
 import json
 from re import A
-from flask import request, abort, current_app, session
+from flask import request, abort
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
@@ -10,31 +10,6 @@ from ..exceptions.AuthError import AuthError
 
 ALGORITHMS = ['RS256']
 
-def setup_auth():
-    oauth = OAuth(current_app)
-    auth0 = oauth.register(
-        'auth0',
-        client_id = env.get('AUTH0_CLIENT_ID'),
-        client_secret = env.get('AUTH0_CLIENT_SECRET'),
-        api_base_url=  env.get('AUTH0_DOMAIN'),
-        access_token_url = env.get('AUTH0_DOMAIN') + '/oauth/token',
-        authorize_url = env.get('AUTH0_DOMAIN') + '/authorize',
-        client_kwargs = {
-            'scope': 'openid profile email',
-        },
-    )
-    return auth0
-
-
-## Auth Header
-
-'''
-    it attempts to get the header from the request
-    it raises an AuthError if no header is present
-    it attempts to split bearer and the token
-    it raises an AuthError if the header is malformed
-    returns the token part of the header
-'''
 def get_token_auth_header():
     auth = request.headers.get('Authorization', None)
     if not auth:
@@ -65,44 +40,6 @@ def get_token_auth_header():
     token = parts[1]
     return token
 
-'''
-    @INPUTS
-        permission: string permission (i.e. 'post:drink')
-        payload: decoded jwt payload
-    it raises an AuthError if permissions are not included in the payload
-    it raises an AuthError if the requested permission string is not in the payload permissions array
-    returns true otherwise
-'''
-def check_permissions(permission=''):
-    print(session['permissions'])
-    if 'permissions' not in session:
-        raise AuthError({
-            'code': 'invalid_permission',
-            'description': 'permissions are not included in the payload'
-        }, 400)
-    if permission != '' and permission not in session['permissions']:
-        raise AuthError({
-            'code': 'invalid_permission',
-            'description': 'permission is not in the permissions array'
-        }, 403)
-    return True
-    
-
-def check_auth():
-    if 'profile' not in session:
-        raise AuthError({
-            'code': 'not_logged_in',
-            'description': 'User ust be logged in.".'
-        }, 401)
-    return True
-'''
-    @INPUTS
-        token: a json web token (string)
-    it verifies the token using Auth0 /.well-known/jwks.json
-    it decodes the payload from the token
-    it validates the claims
-    returns the decoded payload
-'''
 def verify_decode_jwt(token):
     jsonurl = urlopen(env.get('AUTH0_DOMAIN')+'/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
@@ -154,23 +91,27 @@ def verify_decode_jwt(token):
                 'description': 'Unable to find the appropriate key.'
             }, 400)
 
-'''
-    @INPUTS
-        permission: string permission (i.e. 'post:drink')
-    it uses the get_token_auth_header method to get the token
-    it uses the verify_decode_jwt method to decode the jwt
-    it uses the check_permissions method validate claims and check the requested permission
-    returns the decorator which passes the decoded payload to the decorated method
-'''
+def check_permissions(payload, permission=''):
+    if 'permissions' not in payload:
+        raise AuthError({
+            'code': 'invalid_permission',
+            'description': 'permissions are not included in the payload'
+        }, 400)
+    if permission != '' and permission not in payload['permissions']:
+        raise AuthError({
+            'code': 'invalid_permission',
+            'description': 'permission is not in the permissions array'
+        }, 403)
+    return True  
+
 def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
             try:
-                check_auth()
-                # token = get_token_auth_header()
-                # payload = verify_decode_jwt(token)
-                check_permissions(permission)
+                token = get_token_auth_header()
+                payload = verify_decode_jwt(token)
+                check_permissions(payload, permission)
             except Exception as error:
                 abort(error.status_code)
             

@@ -5,8 +5,6 @@ from flask_migrate import Migrate
 db = SQLAlchemy()
 
 def setup_db(app):
-    # app.config["SQLALCHEMY_DATABASE_URI"] = db_path
-    # app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = SQLALCHEMY_TRACK_MODIFICATIONS
     db.app = app
     db.init_app(app)
     Migrate(app, db)

@@ -23,7 +23,7 @@ class BookNoAuthTestCase(unittest.TestCase):
         """Executed after reach test"""
         pass
 
-    def test_get_all_books(self):
+    def test_get_all_books_success(self):
         res = self.client().get('/books')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)

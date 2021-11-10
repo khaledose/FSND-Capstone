@@ -36,13 +36,13 @@ def getBook(book_id):
 @requires_auth(permission='post:books')
 def postBook():
     try:
-        book = repository.post(request)
+        book = repository.post(request.get_json())
         return jsonify({
             'success': True,
             'book': book.to_dict()
         })
     except AuthError as auth_error:
-        print(auth_error)
+        abort(auth_error.status_code)
     except Exception as error:
         abort(500)
     finally:
@@ -52,7 +52,7 @@ def postBook():
 @requires_auth(permission='update:books')
 def updateBook(book_id):
     try:
-        book = repository.update(book_id, request)
+        book = repository.update(book_id, request.get_json())
         
         return jsonify({
             'success': True,
@@ -89,7 +89,7 @@ def deleteBook(book_id):
 @book_api.route('/search', methods=['POST'])
 def searchBook():
     try:
-        books = repository.search(request)
+        books = repository.search(request.get_json())
         return jsonify({
             'success': True,
             'books': [book.to_dict() for book in books]

@@ -15,6 +15,10 @@ def create_app():
     app.register_blueprint(book_api, url_prefix='/books')
     app.register_blueprint(library_api, url_prefix='/library')
     setup_db(app)
+    
+    @app.route('/')
+    def home():
+        return jsonify({"welcome_message": "Welcome To the Library."})
 
     @app.errorhandler(422)
     def unprocessable(error):

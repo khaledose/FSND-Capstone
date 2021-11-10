@@ -7,8 +7,8 @@ from .User import User
 class Library(db.Model):
     __tablename__ = 'library'
     id = Column(Integer, primary_key=True)
-    user_id = Column(String(64), ForeignKey('users.id'))
-    book_id = Column(Integer, ForeignKey('books.id'))
+    user_id = Column(String(64), ForeignKey('users.id'), nullable=False)
+    book_id = Column(Integer, ForeignKey('books.id'), nullable=False)
 
     user = relationship(User, backref=backref("library", cascade="all, delete-orphan"))
     book = relationship(Book, backref=backref("library", cascade="all, delete-orphan"))
